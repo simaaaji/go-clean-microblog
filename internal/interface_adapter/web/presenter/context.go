@@ -26,18 +26,22 @@ func (c *Context) Set(key string, value any) {
 	c.ResponseData[key] = value
 }
 
-func (c *Context) RespondWithJSON() error {
+func (c *Context) RespondWithJSON() {
 	jsonResp, err := json.Marshal(c.ResponseData)
 	if err != nil {
-		log.Fatalf("error handling JSON marshal. Err: %v", err)
+		log.Printf("error handling JSON marshal. Err: %v", err)
+		http.Error(c.ResponseWriter, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
 
 	if c.StatusCode == 0 {
 		log.Fatal("StatusCode is not set")
 	}
 
+	c.ResponseWriter.Header().Set("Content-Type", "application/json")
 	c.ResponseWriter.WriteHeader(c.StatusCode)
 	_, err = c.ResponseWriter.Write(jsonResp)
-
-	return err
+	if err != nil {
+		log.Fatalf("error writing response. Err: %v", err)
+	}
 }
