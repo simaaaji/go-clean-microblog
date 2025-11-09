@@ -27,7 +27,9 @@ func (h *CreatePostHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		PresenterCtx: presenterCtx,
 	}
 
-	h.createPost.Execute(context, input)
+	if err := h.createPost.Execute(context, input); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	presenterCtx.RespondWithJSON()
-}
