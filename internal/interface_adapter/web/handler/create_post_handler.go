@@ -31,5 +31,6 @@ func (h *CreatePostHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	presenterCtx.StatusCode = http.StatusCreated
 	presenterCtx.RespondWithJSON()
+}
