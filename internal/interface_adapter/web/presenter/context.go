@@ -27,7 +27,9 @@ func (c *Context) Set(key string, value any) {
 func (c *Context) RespondWithJSON() error {
 	jsonResp, err := json.Marshal(c.ResponseData)
 	if err != nil {
-		log.Fatalf("error handling JSON marshal. Err: %v", err)
+		log.Printf("error handling JSON marshal. Err: %v", err)
+		http.Error(c.ResponseWriter, "Internal Server Error", http.StatusInternalServerError)
+		return err
 	}
 
 	_, err = c.ResponseWriter.Write(jsonResp)
