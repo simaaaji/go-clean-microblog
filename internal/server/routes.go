@@ -17,12 +17,15 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-Inertia", "X-Inertia-Version"},
 		AllowCredentials: true,
 		MaxAge:           300,
 	}))
 
-	r.Get("/", s.HelloWorldHandler)
+	// Add Inertia middleware
+	r.Use(s.inertia.Middleware)
+
+	r.Get("/", s.IndexHandler)
 
 	r.Get("/health", s.healthHandler)
 

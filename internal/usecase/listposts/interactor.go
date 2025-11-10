@@ -23,6 +23,17 @@ func (i *Interactor) Execute(ctx usecase.Context) error {
 		return err
 	}
 
+	// Limit to most recent 20 posts
+	maxPosts := 20
+	if len(posts) > maxPosts {
+		posts = posts[len(posts)-maxPosts:]
+	}
+
+	// Reverse to show most recent first
+	for i, j := 0, len(posts)-1; i < j; i, j = i+1, j-1 {
+		posts[i], posts[j] = posts[j], posts[i]
+	}
+
 	output := &Output{
 		Posts: make([]PostOutput, len(posts)),
 	}

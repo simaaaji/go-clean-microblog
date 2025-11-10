@@ -8,6 +8,7 @@ import (
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/romsar/gonertia"
 
 	"go-clean-microblog/internal/database"
 )
@@ -15,15 +16,23 @@ import (
 type Server struct {
 	port int
 
-	db database.Service
+	db      database.Service
+	inertia *gonertia.Inertia
 }
 
 func NewServer() *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
-	NewServer := &Server{
-		port: port,
+	
+	// Initialize Inertia
+	inertia, err := gonertia.NewFromFile("templates/app.html")
+	if err != nil {
+		panic(fmt.Sprintf("failed to initialize Inertia: %s", err))
+	}
 
-		db: database.New(),
+	NewServer := &Server{
+		port:    port,
+		db:      database.New(),
+		inertia: inertia,
 	}
 
 	// Declare Server config
