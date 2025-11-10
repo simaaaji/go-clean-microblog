@@ -16,17 +16,17 @@ var (
 
 func init() {
 	r := repo.NewPostRepo()
-	CreatePostHandler = newCreatePostHander(r)
-	ListPostsHandler = newListPostHander(r)
+	CreatePostHandler = newCreatePostHandler(r)
+	ListPostsHandler = newListPostsHandler(r)
 }
 
-func newCreatePostHander(r *repo.PostRepo) *handler.CreatePostHandler {
+func newCreatePostHandler(r *repo.PostRepo) *handler.CreatePostHandler {
 	p := presenter.NewCreatePostPresenter()
 	uc := createpost.NewInteractor(r, p)
 	return handler.NewCreatePostHandler(uc)
 }
 
-func newListPostHander(r *repo.PostRepo) *handler.ListPostsHandler {
+func newListPostsHandler(r *repo.PostRepo) *handler.ListPostsHandler {
 	p := presenter.NewListPostsPresenter()
 	uc := listposts.NewInteractor(r, p)
 	return handler.NewListPostsHandler(uc)
