@@ -4,9 +4,7 @@ import (
 	"context"
 )
 
-type PresenterContext interface {
-	Set(key string, value any)
-}
+type PresenterContext any
 
 type Context struct {
 	Ctx          context.Context

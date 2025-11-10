@@ -13,9 +13,13 @@ func NewCreatePostPresenter() *CreatePostPresenter {
 }
 
 func (p *CreatePostPresenter) Present(ctx usecase.PresenterContext, output *createpost.Output) error {
-	ctx.Set("post", &viewmodel.Post{
-		ID:      output.ID,
-		Content: output.Content,
+	c := ctx.(*Context)
+
+	c.AddViewModel(&viewmodel.CreatePost{
+		Post: &viewmodel.Post{
+			ID:      output.ID,
+			Content: output.Content,
+		},
 	})
 
 	return nil
