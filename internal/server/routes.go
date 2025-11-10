@@ -26,6 +26,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.Get("/health", s.healthHandler)
 
+	r.Route("/posts", func(r chi.Router) {
+		r.Post("/", CreatePostHandler.Handle)
+	})
+
 	return r
 }
 
