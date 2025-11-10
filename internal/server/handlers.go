@@ -14,12 +14,13 @@ import (
 var (
 	CreatePostHandler *handler.CreatePostHandler
 	ListPostsHandler  *handler.ListPostsHandler
+	sharedPostRepo    *repo.PostRepo
 )
 
 func init() {
-	r := repo.NewPostRepo()
-	CreatePostHandler = newCreatePostHandler(r)
-	ListPostsHandler = newListPostsHandler(r)
+	sharedPostRepo = repo.NewPostRepo()
+	CreatePostHandler = newCreatePostHandler(sharedPostRepo)
+	ListPostsHandler = newListPostsHandler(sharedPostRepo)
 }
 
 func newCreatePostHandler(r *repo.PostRepo) *handler.CreatePostHandler {
@@ -36,9 +37,8 @@ func newListPostsHandler(r *repo.PostRepo) *handler.ListPostsHandler {
 
 // IndexHandler handles the index page with Inertia
 func (s *Server) IndexHandler(w http.ResponseWriter, r *http.Request) {
-	postRepo := repo.NewPostRepo()
 	listPostsPresenter := presenter.NewListPostsPresenter()
-	listPostsUsecase := listposts.NewInteractor(postRepo, listPostsPresenter)
+	listPostsUsecase := listposts.NewInteractor(sharedPostRepo, listPostsPresenter)
 
 	presenterCtx := presenter.NewContextWithInertia(w, r, s.inertia)
 	context := usecase.Context{

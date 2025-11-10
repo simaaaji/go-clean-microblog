@@ -32,3 +32,8 @@ main
 # OS X generated file
 .DS_Store
 
+# Node modules and frontend build artifacts
+node_modules/
+public/build/
+.vite/
+
