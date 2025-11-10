@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"go-clean-microblog/internal/interface_adapter/web/viewmodel"
 	"log"
+	"maps"
 	"net/http"
 )
 
@@ -36,14 +37,12 @@ func (c *Context) RespondWithJSON() {
 			log.Printf("error marshaling viewmodel. Err: %v", err)
 			continue
 		}
-		var vmMap map[string]interface{}
+		var vmMap map[string]any
 		if err := json.Unmarshal(vmJSON, &vmMap); err != nil {
 			log.Printf("error unmarshaling viewmodel to map. Err: %v", err)
 			continue
 		}
-		for k, v := range vmMap {
-			merged[k] = v
-		}
+		maps.Copy(merged, vmMap)
 	}
 
 	jsonResp, err := json.Marshal(merged)
