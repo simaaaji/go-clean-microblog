@@ -28,6 +28,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.Route("/posts", func(r chi.Router) {
 		r.Post("/", CreatePostHandler.Handle)
+		r.Get("/", ListPostsHandler.Handle)
 	})
 
 	return r
