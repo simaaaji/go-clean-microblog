@@ -1,19 +1,20 @@
 package presenter
 
 import (
+	"context"
+	"go-clean-microblog/internal/interface_adapter/web"
 	"go-clean-microblog/internal/interface_adapter/web/viewmodel"
-	"go-clean-microblog/internal/usecase"
 	"go-clean-microblog/internal/usecase/listposts"
 )
 
-type ListPostsPresenter struct{}
+type listPostsPresenter struct{}
 
-func NewListPostsPresenter() *ListPostsPresenter {
-	return &ListPostsPresenter{}
+func NewListPostsPresenter() *listPostsPresenter {
+	return &listPostsPresenter{}
 }
 
-func (p *ListPostsPresenter) Present(ctx usecase.PresenterContext, output *listposts.Output) error {
-	c := ctx.(*Context)
+func (p *listPostsPresenter) Present(ctx context.Context, output *listposts.Output) error {
+	c := ctx.(web.Context)
 
 	posts := make([]viewmodel.Post, len(output.Posts))
 	for idx, post := range output.Posts {
@@ -23,7 +24,7 @@ func (p *ListPostsPresenter) Present(ctx usecase.PresenterContext, output *listp
 		}
 	}
 
-	c.AddViewModel(&viewmodel.ListPosts{
+	c.Responder().AddViewModel(&viewmodel.ListPosts{
 		Posts: posts,
 	})
 

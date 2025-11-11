@@ -1,8 +1,7 @@
 package handler
 
 import (
-	"go-clean-microblog/internal/interface_adapter/web/presenter"
-	"go-clean-microblog/internal/usecase"
+	"go-clean-microblog/internal/interface_adapter/web"
 	"go-clean-microblog/internal/usecase/listposts"
 	"net/http"
 )
@@ -18,17 +17,13 @@ func NewListPostsHandler(listPosts listposts.Interaction) *ListPostsHandler {
 }
 
 func (h *ListPostsHandler) Handle(w http.ResponseWriter, r *http.Request) {
-	presenterCtx := presenter.NewContext(w, r)
-	context := usecase.Context{
-		Ctx:          r.Context(),
-		PresenterCtx: presenterCtx,
-	}
+	context := web.NewContext(w, r)
 
 	if err := h.listPosts.Execute(context); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	presenterCtx.StatusCode = http.StatusOK
-	presenterCtx.RespondWithJSON()
+	context.Responder().SetStatusCode(http.StatusOK)
+	context.Responder().Respond()
 }

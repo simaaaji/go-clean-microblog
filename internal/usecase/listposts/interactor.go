@@ -1,8 +1,8 @@
 package listposts
 
 import (
+	"context"
 	"go-clean-microblog/internal/domain"
-	"go-clean-microblog/internal/usecase"
 )
 
 type Interactor struct {
@@ -17,8 +17,8 @@ func NewInteractor(repo domain.PostRepo, presenter Presenter) *Interactor {
 	}
 }
 
-func (i *Interactor) Execute(ctx usecase.Context) error {
-	posts, err := i.repo.FindAll(ctx.Ctx)
+func (i *Interactor) Execute(ctx context.Context) error {
+	posts, err := i.repo.FindAll(ctx)
 	if err != nil {
 		return err
 	}
@@ -34,5 +34,5 @@ func (i *Interactor) Execute(ctx usecase.Context) error {
 		}
 	}
 
-	return i.presenter.Present(ctx.PresenterCtx, output)
+	return i.presenter.Present(ctx, output)
 }

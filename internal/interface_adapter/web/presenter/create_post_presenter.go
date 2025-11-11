@@ -1,21 +1,21 @@
 package presenter
 
 import (
+	"context"
+	"go-clean-microblog/internal/interface_adapter/web"
 	"go-clean-microblog/internal/interface_adapter/web/viewmodel"
-	"go-clean-microblog/internal/usecase"
 	"go-clean-microblog/internal/usecase/createpost"
 )
 
-type CreatePostPresenter struct{}
+type createPostPresenter struct{}
 
-func NewCreatePostPresenter() *CreatePostPresenter {
-	return &CreatePostPresenter{}
+func NewCreatePostPresenter() *createPostPresenter {
+	return &createPostPresenter{}
 }
 
-func (p *CreatePostPresenter) Present(ctx usecase.PresenterContext, output *createpost.Output) error {
-	c := ctx.(*Context)
-
-	c.AddViewModel(&viewmodel.CreatePost{
+func (p *createPostPresenter) Present(ctx context.Context, output *createpost.Output) error {
+	c := ctx.(web.Context)
+	c.Responder().AddViewModel(&viewmodel.CreatePost{
 		Post: &viewmodel.Post{
 			ID:      output.ID,
 			Content: output.Content,
