@@ -7,4 +7,5 @@ require (
 	github.com/go-chi/cors v1.2.2
 	github.com/joho/godotenv v1.5.1
 	github.com/mattn/go-sqlite3 v1.14.32
+  github.com/petaki/inertia-go v1.11.0
 )

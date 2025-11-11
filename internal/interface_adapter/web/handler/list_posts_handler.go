@@ -24,6 +24,7 @@ func (h *ListPostsHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	context.Responder().SetStatusCode(http.StatusOK)
-	context.Responder().Respond()
+	responder := *context.Responder()
+	responder.SetStatusCode(http.StatusOK)
+	responder.Respond("Index")
 }

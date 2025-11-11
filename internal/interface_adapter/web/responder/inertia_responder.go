@@ -6,14 +6,18 @@ import (
 	"log"
 	"maps"
 	"net/http"
+
+	inertia "github.com/petaki/inertia-go"
 )
 
-type JSONResponder struct {
+type InertiaResponder struct {
 	BaseResponder
 }
 
-func NewJSONResponder(w http.ResponseWriter, r *http.Request) *JSONResponder {
-	return &JSONResponder{
+type InertiaManagerCtxKey struct{}
+
+func NewInertiaResponder(w http.ResponseWriter, r *http.Request) *InertiaResponder {
+	return &InertiaResponder{
 		BaseResponder{
 			ResponseWriter: w,
 			Request:        r,
@@ -23,7 +27,15 @@ func NewJSONResponder(w http.ResponseWriter, r *http.Request) *JSONResponder {
 	}
 }
 
-func (r *JSONResponder) Respond() {
+func (r *InertiaResponder) Respond(args ...any) {
+	if len(args) == 0 {
+		log.Fatal("InertiaResponder.Respond requires at least one argument: ComponentName")
+	}
+	componentName, ok := args[0].(string)
+	if !ok {
+		log.Fatal("First argument to InertiaResponder.Respond must be a string representing ComponentName")
+	}
+
 	merged := make(map[string]any)
 	for _, vm := range r.ViewModels {
 		vmJSON, err := json.Marshal(vm)
@@ -39,20 +51,17 @@ func (r *JSONResponder) Respond() {
 		maps.Copy(merged, vmMap)
 	}
 
-	jsonResp, err := json.Marshal(merged)
-	if err != nil {
-		log.Printf("error handling JSON marshal. Err: %v", err)
-		http.Error(r.ResponseWriter, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
 	if r.StatusCode == 0 {
 		log.Fatal("StatusCode is not set")
 	}
 
-	r.ResponseWriter.Header().Set("Content-Type", "application/json")
-	r.ResponseWriter.WriteHeader(r.StatusCode)
-	_, err = r.ResponseWriter.Write(jsonResp)
+	inertiaManager := r.Request.Context().Value(InertiaManagerCtxKey{}).(*inertia.Inertia)
+	if inertiaManager == nil {
+		log.Fatal("InertiaManager is not set in context")
+	}
+
+	err := inertiaManager.Render(r.ResponseWriter, r.Request, componentName, merged)
+
 	if err != nil {
 		log.Fatalf("error writing response. Err: %v", err)
 	}

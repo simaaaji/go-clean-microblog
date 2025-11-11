@@ -27,6 +27,7 @@ func (h *CreatePostHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	context.Responder().SetStatusCode(http.StatusCreated)
-	context.Responder().Respond()
+	responder := *context.Responder()
+	responder.SetStatusCode(http.StatusCreated)
+	responder.Respond("CreatePost")
 }

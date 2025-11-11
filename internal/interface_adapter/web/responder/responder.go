@@ -8,7 +8,7 @@ import (
 type Responder interface {
 	SetStatusCode(code int)
 	AddViewModel(vm viewmodel.ViewModel)
-	Respond()
+	Respond(args ...any)
 }
 
 type BaseResponder struct {
