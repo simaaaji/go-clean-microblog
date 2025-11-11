@@ -1,13 +1,13 @@
 package createpost
 
-import "go-clean-microblog/internal/usecase"
+import "context"
 
 type Interaction interface {
-	Execute(ctx usecase.Context, input Input) error
+	Execute(ctx context.Context, input Input) error
 }
 
 type Presenter interface {
-	Present(ctx usecase.PresenterContext, output *Output) error
+	Present(ctx context.Context, output *Output) error
 }
 
 type Input struct {

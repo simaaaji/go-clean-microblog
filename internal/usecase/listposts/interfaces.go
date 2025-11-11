@@ -1,13 +1,13 @@
 package listposts
 
-import "go-clean-microblog/internal/usecase"
+import "context"
 
 type Interaction interface {
-	Execute(ctx usecase.Context) error
+	Execute(ctx context.Context) error
 }
 
 type Presenter interface {
-	Present(ctx usecase.PresenterContext, output *Output) error
+	Present(ctx context.Context, output *Output) error
 }
 
 type Output struct {

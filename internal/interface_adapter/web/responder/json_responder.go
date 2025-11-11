@@ -1,4 +1,4 @@
-package presenter
+package responder
 
 import (
 	"encoding/json"
@@ -8,28 +8,22 @@ import (
 	"net/http"
 )
 
-type Context struct {
-	ResponseWriter http.ResponseWriter
-	Request        *http.Request
-	StatusCode     int
-	// ウェブでは複数のユースケース利用の結果を最終的に一つのレスポンスとしてまとめて返す必要があるため、複数のViewModelを保持できるようにする
-	ViewModels []viewmodel.ViewModel
+type JSONResponder struct {
+	BaseResponder
 }
 
-func NewContext(w http.ResponseWriter, r *http.Request) *Context {
-	return &Context{
-		ResponseWriter: w,
-		Request:        r,
-		StatusCode:     0,
-		ViewModels:     []viewmodel.ViewModel{},
+func NewJSONResponder(w http.ResponseWriter, r *http.Request) *JSONResponder {
+	return &JSONResponder{
+		BaseResponder{
+			ResponseWriter: w,
+			Request:        r,
+			StatusCode:     0,
+			ViewModels:     []viewmodel.ViewModel{},
+		},
 	}
 }
 
-func (c *Context) AddViewModel(vm viewmodel.ViewModel) {
-	c.ViewModels = append(c.ViewModels, vm)
-}
-
-func (c *Context) RespondWithJSON() {
+func (c *BaseResponder) Respond() {
 	merged := make(map[string]any)
 	for _, vm := range c.ViewModels {
 		vmJSON, err := json.Marshal(vm)
