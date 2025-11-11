@@ -7,10 +7,6 @@ import (
 	"go-clean-microblog/internal/usecase/listposts"
 )
 
-type ListPostsPresenter interface {
-	listposts.Presenter
-}
-
 type listPostsPresenter struct{}
 
 func NewListPostsPresenter() *listPostsPresenter {

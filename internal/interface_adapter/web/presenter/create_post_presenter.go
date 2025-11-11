@@ -7,10 +7,6 @@ import (
 	"go-clean-microblog/internal/usecase/createpost"
 )
 
-type CreatePostPresenter interface {
-	createpost.Presenter
-}
-
 type createPostPresenter struct{}
 
 func NewCreatePostPresenter() *createPostPresenter {
