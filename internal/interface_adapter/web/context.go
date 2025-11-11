@@ -17,7 +17,7 @@ type context struct {
 }
 
 func NewContext(w http.ResponseWriter, r *http.Request) Context {
-	responder := responderByContentType(r)
+	responder := responderByContentType(w, r)
 
 	return &context{
 		Context:   r.Context(),
@@ -25,9 +25,9 @@ func NewContext(w http.ResponseWriter, r *http.Request) Context {
 	}
 }
 
-func responderByContentType(r *http.Request) responder.Responder {
+func responderByContentType(w http.ResponseWriter, r *http.Request) responder.Responder {
 	// 今後Content-Typeに応じて異なるResponderを返すようにする場合はここで実装する
-	return responder.NewJSONResponder(nil, r)
+	return responder.NewJSONResponder(w, r)
 }
 
 func (c *context) Responder() responder.Responder {
