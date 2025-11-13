@@ -2,15 +2,16 @@ package handler
 
 import (
 	"go-clean-microblog/internal/interface_adapter/web"
+	"go-clean-microblog/internal/interface_adapter/web/responder"
 	"go-clean-microblog/internal/usecase/listposts"
 	"net/http"
 )
 
 type ListPostsHandler struct {
-	listPosts listposts.Interaction
+	listPosts listposts.UseCase
 }
 
-func NewListPostsHandler(listPosts listposts.Interaction) *ListPostsHandler {
+func NewListPostsHandler(listPosts listposts.UseCase) *ListPostsHandler {
 	return &ListPostsHandler{
 		listPosts: listPosts,
 	}
@@ -24,6 +25,11 @@ func (h *ListPostsHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	context.Responder().SetStatusCode(http.StatusOK)
-	context.Responder().Respond()
+	re := responder.NewResponderByContentType(w, r)
+	re.SetStatusCode(http.StatusOK)
+	if re.IsInertiaResponder() {
+		re.Respond(context.ViewModel(), "PostsIndex")
+	} else {
+		re.Respond(context.ViewModel())
+	}
 }

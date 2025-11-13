@@ -27,6 +27,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/health", s.healthHandler)
 
 	r.Route("/posts", func(r chi.Router) {
+		r.Use(InertiaMiddleware)
 		r.Post("/", CreatePostHandler.Handle)
 		r.Get("/", ListPostsHandler.Handle)
 	})

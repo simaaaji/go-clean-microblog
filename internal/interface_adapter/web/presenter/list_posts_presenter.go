@@ -24,7 +24,7 @@ func (p *listPostsPresenter) Present(ctx context.Context, output *listposts.Outp
 		}
 	}
 
-	c.Responder().AddViewModel(&viewmodel.ListPosts{
+	c.SetViewModel(&viewmodel.ListPosts{
 		Posts: posts,
 	})
 

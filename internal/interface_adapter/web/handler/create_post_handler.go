@@ -2,15 +2,16 @@ package handler
 
 import (
 	"go-clean-microblog/internal/interface_adapter/web"
+	"go-clean-microblog/internal/interface_adapter/web/responder"
 	"go-clean-microblog/internal/usecase/createpost"
 	"net/http"
 )
 
 type CreatePostHandler struct {
-	createPost createpost.Interaction
+	createPost createpost.UseCase
 }
 
-func NewCreatePostHandler(createPost createpost.Interaction) *CreatePostHandler {
+func NewCreatePostHandler(createPost createpost.UseCase) *CreatePostHandler {
 	return &CreatePostHandler{
 		createPost: createPost,
 	}
@@ -27,6 +28,11 @@ func (h *CreatePostHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	context.Responder().SetStatusCode(http.StatusCreated)
-	context.Responder().Respond()
+	re := responder.NewResponderByContentType(w, r)
+	re.SetStatusCode(http.StatusCreated)
+	if re.IsInertiaResponder() {
+		re.Respond(context.ViewModel(), "CreatePost")
+	} else {
+		re.Respond(context.ViewModel())
+	}
 }
