@@ -1,10 +1,8 @@
 package responder
 
 import (
-	"encoding/json"
 	"go-clean-microblog/internal/interface_adapter/web/viewmodel"
 	"log"
-	"maps"
 	"net/http"
 
 	inertia "github.com/petaki/inertia-go"
@@ -22,12 +20,15 @@ func NewInertiaResponder(w http.ResponseWriter, r *http.Request) *InertiaRespond
 			ResponseWriter: w,
 			Request:        r,
 			StatusCode:     0,
-			ViewModels:     []viewmodel.ViewModel{},
 		},
 	}
 }
 
-func (r *InertiaResponder) Respond(args ...any) {
+func (r *InertiaResponder) IsInertiaResponder() bool {
+	return true
+}
+
+func (r *InertiaResponder) Respond(viewModel viewmodel.ViewModel, args ...any) {
 	if len(args) == 0 {
 		log.Fatal("InertiaResponder.Respond requires at least one argument: ComponentName")
 	}
@@ -36,20 +37,7 @@ func (r *InertiaResponder) Respond(args ...any) {
 		log.Fatal("First argument to InertiaResponder.Respond must be a string representing ComponentName")
 	}
 
-	merged := make(map[string]any)
-	for _, vm := range r.ViewModels {
-		vmJSON, err := json.Marshal(vm)
-		if err != nil {
-			log.Printf("error marshaling viewmodel. Err: %v", err)
-			continue
-		}
-		var vmMap map[string]any
-		if err := json.Unmarshal(vmJSON, &vmMap); err != nil {
-			log.Printf("error unmarshaling viewmodel to map. Err: %v", err)
-			continue
-		}
-		maps.Copy(merged, vmMap)
-	}
+	vmMap := r.vmToMap(viewModel)
 
 	if r.StatusCode == 0 {
 		log.Fatal("StatusCode is not set")
@@ -60,7 +48,7 @@ func (r *InertiaResponder) Respond(args ...any) {
 		log.Fatal("InertiaManager is not set in context")
 	}
 
-	err := inertiaManager.Render(r.ResponseWriter, r.Request, componentName, merged)
+	err := inertiaManager.Render(r.ResponseWriter, r.Request, componentName, vmMap)
 
 	if err != nil {
 		log.Fatalf("error writing response. Err: %v", err)

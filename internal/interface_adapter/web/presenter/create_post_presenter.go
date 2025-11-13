@@ -15,8 +15,7 @@ func NewCreatePostPresenter() *createPostPresenter {
 
 func (p *createPostPresenter) Present(ctx context.Context, output *createpost.Output) error {
 	c := ctx.(web.Context)
-	responder := *c.Responder()
-	responder.AddViewModel(&viewmodel.CreatePost{
+	c.SetViewModel(&viewmodel.CreatePost{
 		Post: &viewmodel.Post{
 			ID:      output.ID,
 			Content: output.Content,

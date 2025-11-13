@@ -1,10 +1,8 @@
 package responder
 
 import (
-	"encoding/json"
 	"go-clean-microblog/internal/interface_adapter/web/viewmodel"
 	"log"
-	"maps"
 	"net/http"
 )
 
@@ -18,28 +16,12 @@ func NewJSONResponder(w http.ResponseWriter, r *http.Request) *JSONResponder {
 			ResponseWriter: w,
 			Request:        r,
 			StatusCode:     0,
-			ViewModels:     []viewmodel.ViewModel{},
 		},
 	}
 }
 
-func (r *JSONResponder) Respond() {
-	merged := make(map[string]any)
-	for _, vm := range r.ViewModels {
-		vmJSON, err := json.Marshal(vm)
-		if err != nil {
-			log.Printf("error marshaling viewmodel. Err: %v", err)
-			continue
-		}
-		var vmMap map[string]any
-		if err := json.Unmarshal(vmJSON, &vmMap); err != nil {
-			log.Printf("error unmarshaling viewmodel to map. Err: %v", err)
-			continue
-		}
-		maps.Copy(merged, vmMap)
-	}
-
-	jsonResp, err := json.Marshal(merged)
+func (r *JSONResponder) Respond(viewModel viewmodel.ViewModel, args ...any) {
+	jsonResp, err := r.vmToJSON(viewModel)
 	if err != nil {
 		log.Printf("error handling JSON marshal. Err: %v", err)
 		http.Error(r.ResponseWriter, "Internal Server Error", http.StatusInternalServerError)

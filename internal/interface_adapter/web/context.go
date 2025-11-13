@@ -2,35 +2,32 @@ package web
 
 import (
 	ctx "context"
-	"go-clean-microblog/internal/interface_adapter/web/responder"
+	"go-clean-microblog/internal/interface_adapter/web/viewmodel"
 	"net/http"
 )
 
 type Context interface {
 	ctx.Context
-	Responder() *responder.Responder
+	ViewModel() viewmodel.ViewModel
+	SetViewModel(vm viewmodel.ViewModel)
 }
 
 type context struct {
 	ctx.Context
-	responder responder.Responder
+	// ウェブの場合、ハンドラでレスポンスを生成する際にViewModelを参照するため、ContextにViewModelを保持させる
+	viewModel viewmodel.ViewModel
 }
 
 func NewContext(w http.ResponseWriter, r *http.Request) Context {
-	responder := responderByContentType(w, r)
-
 	return &context{
-		Context:   r.Context(),
-		responder: responder,
+		Context: r.Context(),
 	}
 }
 
-func responderByContentType(w http.ResponseWriter, r *http.Request) responder.Responder {
-	// 今後Content-Typeに応じて異なるResponderを返すようにする場合はここで実装する
-	// return responder.NewJSONResponder(w, r)
-	return responder.NewInertiaResponder(w, r)
+func (c *context) ViewModel() viewmodel.ViewModel {
+	return c.viewModel
 }
 
-func (c *context) Responder() *responder.Responder {
-	return &c.responder
+func (c *context) SetViewModel(vm viewmodel.ViewModel) {
+	c.viewModel = vm
 }

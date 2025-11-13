@@ -2,6 +2,7 @@ package handler
 
 import (
 	"go-clean-microblog/internal/interface_adapter/web"
+	"go-clean-microblog/internal/interface_adapter/web/responder"
 	"go-clean-microblog/internal/usecase/createpost"
 	"net/http"
 )
@@ -27,7 +28,11 @@ func (h *CreatePostHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responder := *context.Responder()
-	responder.SetStatusCode(http.StatusCreated)
-	responder.Respond("CreatePost")
+	re := responder.NewResponderByContentType(w, r)
+	re.SetStatusCode(http.StatusCreated)
+	if re.IsInertiaResponder() {
+		re.Respond(context.ViewModel(), "CreatePost")
+	} else {
+		re.Respond(context.ViewModel())
+	}
 }
