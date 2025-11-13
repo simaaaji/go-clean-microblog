@@ -7,10 +7,10 @@ import (
 )
 
 type ListPostsHandler struct {
-	listPosts listposts.Interaction
+	listPosts listposts.UseCase
 }
 
-func NewListPostsHandler(listPosts listposts.Interaction) *ListPostsHandler {
+func NewListPostsHandler(listPosts listposts.UseCase) *ListPostsHandler {
 	return &ListPostsHandler{
 		listPosts: listPosts,
 	}

@@ -2,7 +2,7 @@ package listposts
 
 import "context"
 
-type Interaction interface {
+type UseCase interface {
 	Execute(ctx context.Context) error
 }
 

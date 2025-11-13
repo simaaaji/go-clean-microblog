@@ -2,7 +2,7 @@ package createpost
 
 import "context"
 
-type Interaction interface {
+type UseCase interface {
 	Execute(ctx context.Context, input Input) error
 }
 

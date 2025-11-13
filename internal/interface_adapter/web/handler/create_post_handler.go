@@ -7,10 +7,10 @@ import (
 )
 
 type CreatePostHandler struct {
-	createPost createpost.Interaction
+	createPost createpost.UseCase
 }
 
-func NewCreatePostHandler(createPost createpost.Interaction) *CreatePostHandler {
+func NewCreatePostHandler(createPost createpost.UseCase) *CreatePostHandler {
 	return &CreatePostHandler{
 		createPost: createPost,
 	}
